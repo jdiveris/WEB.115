@@ -1,6 +1,7 @@
+// ADD PRINT & DOWNLOAD //
+
 // When Window loads
 window.addEventListener("load", e => {
-    console.log("load");
     // Add event listeners to Weekday Tab titles
     $(".title").click(e => {
         // Toggle active classes for prev tab
@@ -10,7 +11,7 @@ window.addEventListener("load", e => {
         // Toggle active classes for new tab
         $(e.target).toggleClass("active");
         let day = e.target.id
-        $("."+day).toggleClass("inactive"); // Animate this later //
+        $("."+day).toggleClass("inactive"); // Animate this later // Oh geez it's late...
     });
 
     // Add event listeners to item buttons to add extra fields
@@ -22,6 +23,7 @@ window.addEventListener("load", e => {
         let index = class_id.indexOf('add');
         $(e.target).prevAll("br.hidden").first().removeClass("hidden");
         $(e.target).prevAll("input.hidden."+class_id[index-1]).last().removeClass("hidden");
+
     });
 
     // Add event listener to clear button to reset input fields
@@ -33,7 +35,36 @@ window.addEventListener("load", e => {
     // Add event listener to create meal plan
     $("button.create_plan").click(e =>{
         e.preventDefault();
-        generate_planner();
+        
+        let email = document.getElementById("email")
+        let email_regx = /@.+/; // Research has indicated simple is best for email validation
+
+        // Test for valid email
+        if (email_regx.test(email.value)){
+            // Collect all user inputs - returns an object  
+            const user_meals = get_inputs();
+
+            // Condense obj to JSON str
+            const user_meals_json = JSON.stringify(user_meals);
+
+            // Build our basic HTML for window (most will be generated after load)
+            baseHTML = ("<html>\n<head>\n<title>Planner</title>\n");
+            baseHTML += ("<link rel=\"stylesheet\" href=\"planner.css\">\n");
+            baseHTML += ("<script src=\"planner.js\"></script>\n</head>\n<body>\n");
+            baseHTML += ("<div id=\"json_contents\">" + user_meals_json + "</div>\n"); // Include div to hold our Planner Data
+            baseHTML += ("<script>\ngenerate_planner();\n</script>\n") // Call function to generate the page
+            baseHTML += ("</body>\n</html>");
+
+            // Open the window
+            flyWindow = window.open('about:blank','myPop','width=700,height=850,left=400,top=10');
+            flyWindow.document.write(baseHTML);
+        } else {
+            // If invalid email
+            alert("Please enter a valid Email address")
+            email.focus();
+        }
+
+
     })
 
     // Add mouseover/mouseout events for form elements
@@ -69,14 +100,19 @@ window.addEventListener("load", e => {
 
 
 
+// This function could have been designed better using loops, but I struggled to
+// think of ways to do so cleanly before being well past the point of no return
 
+function get_inputs() { 
+    // Create parent array for the entire week
+    var week_meals = [];
 
-function generate_planner() {
-    // Create arrays for all Monday Meals 
-    const mon_meals = [];
+    // Create parent array for all Monday Meals 
+    const mon_meals = ["Monday"]; // First value will be used when generating page
     const mon_break_values = [];
     let mon_break_inputs = document.getElementsByClassName("m b-item");
 
+    // Filter out empty input boxes and build breakfast array
     for(let i = 0; i < mon_break_inputs.length; i++) {
         if (mon_break_inputs[i].value != "") {
             mon_break_values.push(mon_break_inputs[i].value)
@@ -85,6 +121,7 @@ function generate_planner() {
         }
     }
 
+    // Append to Monday parent
     mon_meals.push(mon_break_values);
 
     const mon_snack1_values = [];
@@ -134,11 +171,12 @@ function generate_planner() {
         }
     }
     mon_meals.push(mon_din_values);
-
-    console.log(mon_meals);
+    
+    // Append to Week Parent
+    week_meals.push(mon_meals);
 
     // Create arrays for all Tuesday Meals 
-    const tues_meals = [];
+    const tues_meals = ["Tuesday"];
     const tues_break_values = [];
     let tues_break_inputs = document.getElementsByClassName("tu b-item");
 
@@ -199,10 +237,10 @@ function generate_planner() {
     }
     tues_meals.push(tues_din_values);
 
-    console.log(tues_meals);
+    week_meals.push(tues_meals);
 
     // Create arrays for all Wednesday Meals 
-    const wed_meals = [];
+    const wed_meals = ["Wednesday"];
     const wed_break_values = [];
     let wed_break_inputs = document.getElementsByClassName("w b-item");
 
@@ -263,10 +301,10 @@ function generate_planner() {
     }
     wed_meals.push(wed_din_values);
 
-    console.log(wed_meals);
+    week_meals.push(wed_meals);
 
     // Create arrays for all Thursday Meals 
-    const thurs_meals = [];
+    const thurs_meals = ["Thursday"];
     const thurs_break_values = [];
     let thurs_break_inputs = document.getElementsByClassName("th b-item");
 
@@ -327,10 +365,10 @@ function generate_planner() {
     }
     thurs_meals.push(thurs_din_values);
 
-    console.log(thurs_meals);
+    week_meals.push(thurs_meals);
 
     // Create arrays for all Friday Meals 
-    const fri_meals = [];
+    const fri_meals = ["Friday"];
     const fri_break_values = [];
     let fri_break_inputs = document.getElementsByClassName("f b-item");
 
@@ -391,10 +429,10 @@ function generate_planner() {
     }
     fri_meals.push(fri_din_values);
 
-    console.log(fri_meals)
+    week_meals.push(fri_meals)
 
     // Create arrays for all Saturday Meals
-    const sat_meals = [];
+    const sat_meals = ["Saturday"];
     const sat_break_values = [];
     let sat_break_inputs = document.getElementsByClassName("sa b-item");
 
@@ -455,10 +493,10 @@ function generate_planner() {
     }
     sat_meals.push(sat_din_values);
 
-    console.log(sat_meals);
+    week_meals.push(sat_meals);
 
     // Create arrays for all Sunday Meals 
-    const sun_meals = [];
+    const sun_meals = ["Sunday"];
     const sun_break_values = [];
     let sun_break_inputs = document.getElementsByClassName("su b-item");
 
@@ -519,6 +557,23 @@ function generate_planner() {
     }
     sun_meals.push(sun_din_values);
 
-    console.log(sun_meals);
+    // Final Array of all meals
+    week_meals.push(sun_meals);
     
+    // Get User Personal info & Goal
+    let goal = document.getElementById("goal").value;
+    let name = document.getElementById("fname").value;
+    name += " ";
+    name += document.getElementById("lname").value;
+
+    // Package all our data into an Obj
+    const meal_plan = {
+        Name: name,
+        Goal: goal,
+        Meals: week_meals
+    }
+    console.log(meal_plan);
+
+    // Return it to the event function
+    return meal_plan;
 }

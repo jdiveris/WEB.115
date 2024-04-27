@@ -1,0 +1,29 @@
+.day {
+    width:80%;
+    margin-left: 5%;
+    margin-top: 25px;
+    border: solid #0499AE 3px;
+    border-radius: 12px;
+    padding-left: 10%;
+    padding-bottom: 30px;
+}
+
+#json_contents{
+    display: none;
+}
+
+div.day > ul {
+    margin-left: 5%;
+}
+
+div.day > h1 {
+    text-decoration: underline;
+}
+
+div.day > h3 {
+    margin-left: 5%;
+}
+
+h1,h2,h3 {
+   color: #014750;
+}
