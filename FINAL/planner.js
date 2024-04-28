@@ -1,5 +1,32 @@
 function generate_planner() {
 
+    // Add a download/print button to the web page
+    var print_btn = document.createElement("button");
+    var attr_id = document.createAttribute("id");
+    attr_id.value = "print_btn";
+    print_btn.setAttributeNode(attr_id);
+    var print_btn_text = document.createTextNode("Print/Download Planner");
+    print_btn.appendChild(print_btn_text);
+    document.body.appendChild(print_btn);
+
+    // Add event listener to print button
+    print_btn = document.getElementById("print_btn")
+    print_btn.addEventListener("click", e => {
+        e.preventDefault();
+        window.print();
+    });
+    
+    // Dynamic Button events
+    print_btn.addEventListener("mouseover", e => {
+        e.target.style.border = "2px solid #0499AE";
+        e.target.style.backgroundColor = "#50C179";
+    });
+
+    print_btn.addEventListener("mouseout", e => {
+        e.target.style.border = ".1px solid rgba(100, 187, 71, 0.7)";
+        e.target.style.backgroundColor = "rgb(122, 215, 90, .7)";
+    });
+
     // Unpack JSON
     const user_plan = JSON.parse(document.getElementById("json_contents").textContent);
 
@@ -14,29 +41,35 @@ function generate_planner() {
     info = info.slice(0,2);
 
     // Build Page heading using Personal info
+    const heading_div = document.createElement("div");
+    var attr_class = document.createAttribute("class");
+    attr_class.value = "heading";
+    heading_div.setAttributeNode(attr_class);
     const heading = document.createElement("h1");
     const heading_text = document.createTextNode(info[0] + "'s Meal Plan");
     heading.appendChild(heading_text);
-    var attr_class = document.createAttribute("class");
-    attr_class.value = "heading";
-    heading.setAttributeNode(attr_class);
-    document.body.appendChild(heading);
+    heading_div.appendChild(heading);
     const br = document.createElement("br");
-    document.body.appendChild(br);
-    document.body.appendChild(br);
+    heading_div.appendChild(br);
+    heading_div.appendChild(br);
 
     const heading2 = document.createElement("h2");
     const heading2_text = document.createTextNode("This Week's Goal:")
     heading2.appendChild(heading2_text);
-    document.body.appendChild(heading2);
-    document.body.appendChild(br);
+    heading_div.appendChild(heading2);
+    heading_div.appendChild(br);
 
     const goal = document.createElement("p");
     const goal_text = document.createTextNode(info[1]);
     goal.appendChild(goal_text);
-    document.body.appendChild(goal);
+    heading_div.appendChild(goal);
+
+    // Add Heading to DOM
+    document.body.appendChild(heading_div);
     document.body.appendChild(br);
     document.body.appendChild(br);
+
+    
 
     // Populate Page with meal data: Loop for each day
     for(i = 0; i < 7; i++){

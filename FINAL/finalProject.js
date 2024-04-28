@@ -1,5 +1,3 @@
-// ADD PRINT & DOWNLOAD //
-
 // When Window loads
 window.addEventListener("load", e => {
     // Add event listeners to Weekday Tab titles
@@ -17,11 +15,13 @@ window.addEventListener("load", e => {
     // Add event listeners to item buttons to add extra fields
     $("div.day button").click(e => {
         e.preventDefault();
-        
+        // Get the specific input section
         let class_id = $(e.target).attr('class');
         class_id = class_id.split(' ');
         let index = class_id.indexOf('add');
-        $(e.target).prevAll("br.hidden").first().removeClass("hidden");
+
+        // Reveal the correct input field
+        $(e.target).prevAll("input.hidden."+class_id[index-1]).last().after("<br>")
         $(e.target).prevAll("input.hidden."+class_id[index-1]).last().removeClass("hidden");
 
     });
