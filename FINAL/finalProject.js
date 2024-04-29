@@ -91,7 +91,7 @@ window.addEventListener("load", e => {
     $("button").mouseout(e => {
         $(e.target).css({
             "border": ".1px solid rgba(100, 187, 71, 0.7)",
-            "backgroundColor": "rgb(122, 215, 90, .7)"
+            "backgroundColor": "#84d965"
         })
     })
 })

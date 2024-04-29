@@ -24,7 +24,7 @@ function generate_planner() {
 
     print_btn.addEventListener("mouseout", e => {
         e.target.style.border = ".1px solid rgba(100, 187, 71, 0.7)";
-        e.target.style.backgroundColor = "rgb(122, 215, 90, .7)";
+        e.target.style.backgroundColor = "#84d965";
     });
 
     // Unpack JSON
